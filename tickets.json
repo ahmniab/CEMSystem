@@ -1,11 +1,19 @@
 [
   {
+    "TicketId": "TKT-4D10F560",
+    "CustomerName": "LOL",
+    "SeatRow": 1,
+    "SeatColumn": 3,
+    "BookingDate": "2025-11-25T00:10:04.8865047+02:00",
+    "IsRedeemed": true
+  },
+  {
     "TicketId": "TKT-4FCBC82E",
     "CustomerName": "GG",
     "SeatRow": 1,
     "SeatColumn": 1,
     "BookingDate": "2025-11-24T23:44:35.9007891+02:00",
-    "IsRedeemed": false
+    "IsRedeemed": true
   },
   {
     "TicketId": "TKT-8A818B67",
@@ -61,6 +69,6 @@
     "SeatRow": 7,
     "SeatColumn": 16,
     "BookingDate": "2025-11-24T17:01:53.3793523+02:00",
-    "IsRedeemed": false
+    "IsRedeemed": true
   }
 ]

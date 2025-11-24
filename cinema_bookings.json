@@ -5,9 +5,9 @@
     {
       "Row": 1,
       "Column": 1,
-      "Status": 1,
-      "BookedBy": "GG",
-      "BookingTime": "2025-11-24T23:44:35.9007891+02:00"
+      "Status": 0,
+      "BookedBy": null,
+      "BookingTime": null
     },
     {
       "Row": 1,
@@ -950,9 +950,9 @@
     {
       "Row": 7,
       "Column": 16,
-      "Status": 1,
-      "BookedBy": "Hey",
-      "BookingTime": "2025-11-24T17:01:53.3793523+02:00"
+      "Status": 0,
+      "BookedBy": null,
+      "BookingTime": null
     },
     {
       "Row": 7,

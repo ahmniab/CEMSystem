@@ -75,21 +75,6 @@ module CinemaView =
                 | None -> statusMessage.Set "Please select a seat first"
                 | Some _ -> statusMessage.Set "Please enter customer name"
 
-            let onCancelBooking () =
-                match selectedSeat.Current with
-                | Some(row, col) ->
-                    match CinemaService.cancelBooking cinema.Current row col with
-                    | Success msg ->
-                        statusMessage.Set msg
-                        selectedSeat.Set None
-                        // Reload cinema data
-                        match CinemaService.loadCinemaData () with
-                        | Result.Ok c -> cinema.Set c
-                        | Result.Error _ -> ()
-                    | Error msg -> statusMessage.Set msg
-                    | _ -> statusMessage.Set "Cannot cancel booking"
-                | None -> statusMessage.Set "Please select a seat first"
-
             DockPanel.create
                 [ DockPanel.children
                       [
@@ -146,13 +131,6 @@ module CinemaView =
                                           )
                                           Button.onClick (fun _ -> onBookSeat ())
                                           Button.margin (0.0, 10.0, 0.0, 0.0) ]
-
-                                    Button.create
-                                        [ Button.content "Cancel Booking"
-                                          Button.background Brushes.Orange
-                                          Button.foreground Brushes.White
-                                          Button.isEnabled selectedSeat.Current.IsSome
-                                          Button.onClick (fun _ -> onCancelBooking ()) ]
 
                                     Button.create
                                         [ Button.content "Clear Selection"
@@ -216,7 +194,7 @@ module CinemaView =
                                                     Border.cornerRadius 5.0
                                                     Border.child (
                                                         TextBlock.create
-                                                            [ TextBlock.text "🎬 SCREEN 🎬"
+                                                            [ TextBlock.text "SCREEN"
                                                               TextBlock.foreground Brushes.White
                                                               TextBlock.horizontalAlignment HorizontalAlignment.Center
                                                               TextBlock.verticalAlignment VerticalAlignment.Center

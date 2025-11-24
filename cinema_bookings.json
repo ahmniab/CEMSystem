@@ -950,9 +950,9 @@
     {
       "Row": 7,
       "Column": 16,
-      "Status": 1,
-      "BookedBy": "ahmed",
-      "BookingTime": "2025-11-24T15:42:10.4780356+02:00"
+      "Status": 0,
+      "BookedBy": null,
+      "BookingTime": null
     },
     {
       "Row": 7,

@@ -2,7 +2,6 @@ namespace CEMSystem.Services
 
 open System
 open System.IO
-open System.Text
 open CEMSystem.Data
 
 module HtmlTicketGenerator =

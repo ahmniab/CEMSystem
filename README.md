@@ -220,7 +220,25 @@ The application has two main views accessible via navigation tabs:
       "BookedBy": "John Doe",
       "BookingTime": "2024-11-24T15:30:00.123Z"
     }
+  ]
 }
+```
+
+_Where `Status: 0` = Available, `Status: 1` = Booked_
+
+**Tickets Database (`tickets.json`):**
+
+```json
+[
+  {
+    "TicketId": "TKT-A1B2C3",
+    "CustomerName": "John Doe",
+    "SeatRow": 5,
+    "SeatColumn": 10,
+    "BookingDate": "2024-11-24T15:30:00.123Z",
+    "IsRedeemed": false
+  }
+]
 ```
 
 ## Key Features ✨
@@ -282,19 +300,3 @@ This project is part of the CEM Cinema Management System.
 ---
 
 **Built with ❤️ using F# and Avalonia UI**
-_Where `Status: 0` = Available, `Status: 1` = Booked_
-
-**Tickets Database (`tickets.json`):**
-
-```json
-[
-  {
-    "TicketId": "TKT-A1B2C3",
-    "CustomerName": "John Doe",
-    "SeatRow": 5,
-    "SeatColumn": 10,
-    "BookingDate": "2024-11-24T15:30:00.123Z",
-    "IsRedeemed": false
-  }
-]
-```

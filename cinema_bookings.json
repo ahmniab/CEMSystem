@@ -5,9 +5,9 @@
     {
       "Row": 1,
       "Column": 1,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "GG",
+      "BookingTime": "2025-11-24T23:44:35.9007891+02:00"
     },
     {
       "Row": 1,
@@ -264,9 +264,9 @@
     {
       "Row": 2,
       "Column": 18,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "ABDO WALEAD",
+      "BookingTime": "2025-11-24T23:33:29.1032186+02:00"
     },
     {
       "Row": 2,
@@ -390,9 +390,9 @@
     {
       "Row": 3,
       "Column": 16,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "LOL",
+      "BookingTime": "2025-11-24T23:15:25.1434218+02:00"
     },
     {
       "Row": 3,
@@ -411,9 +411,9 @@
     {
       "Row": 3,
       "Column": 19,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "hey",
+      "BookingTime": "2025-11-24T23:09:50.2457215+02:00"
     },
     {
       "Row": 3,
@@ -656,9 +656,9 @@
     {
       "Row": 5,
       "Column": 14,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "3BS",
+      "BookingTime": "2025-11-24T23:22:25.0348501+02:00"
     },
     {
       "Row": 5,

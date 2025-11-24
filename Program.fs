@@ -1,14 +1,9 @@
 namespace CEMSystem
 
 open Avalonia
-open Avalonia.Controls
 open Avalonia.Controls.ApplicationLifetimes
-open Avalonia.Layout
-open Avalonia.Media
 open Avalonia.Themes.Fluent
-open Avalonia.FuncUI
 open Avalonia.FuncUI.Hosts
-open Avalonia.FuncUI.DSL
 open CEMSystem.Components
 
 module Main =

@@ -1,4 +1,4 @@
-﻿namespace CounterApp
+namespace CEMSystem
 
 open Avalonia
 open Avalonia.Controls.ApplicationLifetimes
@@ -8,65 +8,35 @@ open Avalonia.Controls
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
 open Avalonia.Layout
+open CEMSystem.Components
 
 module Main =
 
-    let view () =
-        Component(fun ctx ->
-            let state = ctx.useState 0
-
-            DockPanel.create [
-                DockPanel.children [
-                    Button.create [
-                        Button.dock Dock.Bottom
-                        Button.onClick (fun _ -> state.Set(state.Current - 1))
-                        Button.content "-"
-                        Button.horizontalAlignment HorizontalAlignment.Stretch
-                        Button.horizontalContentAlignment HorizontalAlignment.Center
-                    ]
-                    Button.create [
-                        Button.dock Dock.Bottom
-                        Button.onClick (fun _ -> state.Set(state.Current + 1))
-                        Button.content "+"
-                        Button.horizontalAlignment HorizontalAlignment.Stretch
-                        Button.horizontalContentAlignment HorizontalAlignment.Center
-                    ]
-                    TextBlock.create [
-                        TextBlock.dock Dock.Top
-                        TextBlock.fontSize 48.0
-                        TextBlock.verticalAlignment VerticalAlignment.Center
-                        TextBlock.horizontalAlignment HorizontalAlignment.Center
-                        TextBlock.text (string state.Current)
-                    ]
-                ]
-            ]
-        )
+    let view () = CinemaView.view ()
 
 type MainWindow() =
     inherit HostWindow()
+
     do
-        base.Title <- "Counter Example"
+        base.Title <- "Cinema Seat Booking System"
         base.Content <- Main.view ()
+        base.Width <- 1200.0
+        base.Height <- 800.0
 
 type App() =
     inherit Application()
 
     override this.Initialize() =
-        this.Styles.Add (FluentTheme())
+        this.Styles.Add(FluentTheme())
         this.RequestedThemeVariant <- Styling.ThemeVariant.Dark
 
     override this.OnFrameworkInitializationCompleted() =
         match this.ApplicationLifetime with
-        | :? IClassicDesktopStyleApplicationLifetime as desktopLifetime ->
-            desktopLifetime.MainWindow <- MainWindow()
+        | :? IClassicDesktopStyleApplicationLifetime as desktopLifetime -> desktopLifetime.MainWindow <- MainWindow()
         | _ -> ()
 
 module Program =
 
     [<EntryPoint>]
-    let main(args: string[]) =
-        AppBuilder
-            .Configure<App>()
-            .UsePlatformDetect()
-            .UseSkia()
-            .StartWithClassicDesktopLifetime(args)
+    let main (args: string[]) =
+        AppBuilder.Configure<App>().UsePlatformDetect().UseSkia().StartWithClassicDesktopLifetime(args)

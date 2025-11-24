@@ -4,13 +4,12 @@ open System
 open System.IO
 open System.Text.Json
 open CEMSystem.Data
-open CEMSystem.Services.DigitalSignatureService
 
 module TicketService =
 
     let private ticketsFilePath = "tickets.json"
 
-    // Serializable ticket for storage
+    // Serializable ticket for storage (simplified without token)
     [<CLIMutable>]
     type SerializableTicket =
         { TicketId: string
@@ -18,8 +17,14 @@ module TicketService =
           SeatRow: int
           SeatColumn: int
           BookingDate: DateTime
-          Token: string
           IsRedeemed: bool }
+
+    // Generate simple ticket ID based on ticket data
+    let private generateTicketId (customerName: string) (seatInfo: string) (bookingTime: DateTime) =
+        let formattedTime = bookingTime.ToString("yyyy-MM-dd-HH-mm-ss")
+        let data = $"{customerName}:{seatInfo}:{formattedTime}"
+        let hash = data.GetHashCode().ToString("X")
+        $"TKT-{hash}"
 
     // Load tickets from file
     let loadTickets () =
@@ -44,49 +49,40 @@ module TicketService =
         with ex ->
             Result.Error $"Failed to save tickets: {ex.Message}"
 
-    // Create a new ticket
+    // Create a new ticket (simplified without digital signature)
     let createTicket (customerName: string) (seatRow: int) (seatColumn: int) (bookingDate: DateTime) =
         try
             let seatInfo = $"Row {seatRow}, Seat {seatColumn}"
             let ticketId = generateTicketId customerName seatInfo bookingDate
 
-            let payload =
-                { CustomerName = customerName
-                  SeatInfo = seatInfo
-                  BookingDateTime = bookingDate }
+            let ticket =
+                { TicketId = ticketId
+                  CustomerName = customerName
+                  SeatRow = seatRow
+                  SeatColumn = seatColumn
+                  BookingDate = bookingDate
+                  IsRedeemed = false }
 
-            match createTicketToken payload with
-            | Result.Ok token ->
-                let ticket =
-                    { TicketId = ticketId
-                      CustomerName = customerName
-                      SeatRow = seatRow
-                      SeatColumn = seatColumn
-                      BookingDate = bookingDate
-                      Token = token
-                      IsRedeemed = false }
+            match loadTickets () with
+            | Result.Ok existingTickets ->
+                let updatedTickets = ticket :: existingTickets
 
-                match loadTickets () with
-                | Result.Ok existingTickets ->
-                    let updatedTickets = ticket :: existingTickets
+                match saveTickets updatedTickets with
+                | Result.Ok() ->
+                    let ticketInfo =
+                        { CustomerName = customerName
+                          SeatRow = seatRow
+                          SeatColumn = seatColumn
+                          BookingDate = bookingDate
+                          TicketId = ticketId }
 
-                    match saveTickets updatedTickets with
-                    | Result.Ok() ->
-                        let ticketInfo =
-                            { CustomerName = customerName
-                              SeatRow = seatRow
-                              SeatColumn = seatColumn
-                              BookingDate = bookingDate
-                              TicketId = ticketId }
-
-                        TicketCreated ticketInfo
-                    | Result.Error msg -> TicketError msg
+                    TicketCreated ticketInfo
                 | Result.Error msg -> TicketError msg
             | Result.Error msg -> TicketError msg
         with ex ->
             TicketError $"Failed to create ticket: {ex.Message}"
 
-    // Validate ticket by ID
+    // Validate ticket by ID (simplified without token verification)
     let validateTicket (ticketId: string) =
         try
             match loadTickets () with
@@ -96,18 +92,14 @@ module TicketService =
                     if ticket.IsRedeemed then
                         InvalidTicket "Ticket has already been redeemed"
                     else
-                        // Verify the token signature
-                        match verifyTicketToken ticket.Token with
-                        | Result.Ok payload ->
-                            let ticketInfo =
-                                { CustomerName = ticket.CustomerName
-                                  SeatRow = ticket.SeatRow
-                                  SeatColumn = ticket.SeatColumn
-                                  BookingDate = ticket.BookingDate
-                                  TicketId = ticket.TicketId }
+                        let ticketInfo =
+                            { CustomerName = ticket.CustomerName
+                              SeatRow = ticket.SeatRow
+                              SeatColumn = ticket.SeatColumn
+                              BookingDate = ticket.BookingDate
+                              TicketId = ticket.TicketId }
 
-                            ValidTicket ticketInfo
-                        | Result.Error msg -> InvalidTicket msg
+                        ValidTicket ticketInfo
                 | None -> TicketNotFound
             | Result.Error msg -> ValidationError msg
         with ex ->

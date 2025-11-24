@@ -11,15 +11,6 @@ type TicketInfo =
       BookingDate: DateTime
       TicketId: string }
 
-// Ticket payload for JWT-like token
-[<CLIMutable>]
-type TicketPayload =
-    { CustomerName: string
-      SeatInfo: string // "Row X, Seat Y" format
-      BookingDateTime: DateTime
-    // No expiration date as per requirements
-    }
-
 // Ticket validation result
 type TicketValidationResult =
     | ValidTicket of TicketInfo

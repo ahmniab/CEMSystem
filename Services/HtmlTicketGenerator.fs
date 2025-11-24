@@ -7,8 +7,8 @@ open CEMSystem.Data
 
 module HtmlTicketGenerator =
 
-    // Generate HTML ticket content
-    let generateTicketHtml (ticketInfo: TicketInfo) (token: string) =
+    // Generate HTML ticket content (simplified without token)
+    let generateTicketHtml (ticketInfo: TicketInfo) =
         let bookingDate = ticketInfo.BookingDate.ToString("yyyy-MM-dd")
         let bookingTime = ticketInfo.BookingDate.ToString("HH:mm")
         let generatedTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
@@ -147,28 +147,6 @@ module HtmlTicketGenerator =
             word-break: break-all;
         }
         
-        .token-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-        }
-        
-        .token-label {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-        
-        .token-value {
-            font-family: 'Courier New', monospace;
-            font-size: 10px;
-            word-break: break-all;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-        
         .footer {
             text-align: center;
             margin-top: 25px;
@@ -226,11 +204,6 @@ module HtmlTicketGenerator =
                 <div class="ticket-id-value">%s</div>
             </div>
             
-            <div class="token-section">
-                <div class="token-label">Digital Signature</div>
-                <div class="token-value">%s</div>
-            </div>
-            
             <div class="footer">
                 <p>Please present this ticket at the entrance</p>
                 <p>Valid for one-time use only</p>
@@ -246,14 +219,13 @@ module HtmlTicketGenerator =
             bookingTime
             seatNumber
             ticketInfo.TicketId
-            token
             generatedTime
 
-    // Save ticket as HTML file
-    let saveTicketAsHtml (ticketInfo: TicketInfo) (token: string) =
+    // Save ticket as HTML file (simplified without token)
+    let saveTicketAsHtml (ticketInfo: TicketInfo) =
         try
-            let filename = $"ticket_{ticketInfo.TicketId}.html"
-            let htmlContent = generateTicketHtml ticketInfo token
+            let filename = $"Tickets/ticket_{ticketInfo.TicketId}.html"
+            let htmlContent = generateTicketHtml ticketInfo
             File.WriteAllText(filename, htmlContent)
             Result.Ok filename
         with ex ->

@@ -70,9 +70,7 @@ module CinemaView =
                             | Result.Ok tickets ->
                                 match tickets |> List.tryFind (fun t -> t.TicketId = ticketInfo.TicketId) with
                                 | Some ticket ->
-                                    match
-                                        CEMSystem.Services.HtmlTicketGenerator.saveTicketAsHtml ticketInfo ticket.Token
-                                    with
+                                    match CEMSystem.Services.HtmlTicketGenerator.saveTicketAsHtml ticketInfo with
                                     | Result.Ok filename ->
                                         statusMessage.Set
                                             $"{msg}\n🎫 Ticket created: {filename}\n📋 Ticket ID: {ticketInfo.TicketId}"

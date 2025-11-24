@@ -348,9 +348,9 @@
     {
       "Row": 3,
       "Column": 10,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "3BS",
+      "BookingTime": "2025-11-24T18:00:36.5800254+02:00"
     },
     {
       "Row": 3,
@@ -1090,9 +1090,9 @@
     {
       "Row": 8,
       "Column": 16,
-      "Status": 0,
-      "BookedBy": null,
-      "BookingTime": null
+      "Status": 1,
+      "BookedBy": "ALI",
+      "BookingTime": "2025-11-24T17:56:25.7708665+02:00"
     },
     {
       "Row": 8,

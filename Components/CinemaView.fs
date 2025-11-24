@@ -144,20 +144,7 @@ module CinemaView =
                                                           $"Total: {CinemaService.getTotalSeatsCount cinema.Current}"
                                                       TextBlock.fontSize 10.0 ] ] ]
 
-                                    // Legend
-                                    StackPanel.create
-                                        [ StackPanel.orientation Orientation.Vertical
-                                          StackPanel.spacing 5.0
-                                          StackPanel.margin (0.0, 20.0, 0.0, 0.0)
-                                          StackPanel.children
-                                              [ TextBlock.create
-                                                    [ TextBlock.text "Legend:"
-                                                      TextBlock.fontSize 12.0
-                                                      TextBlock.fontWeight FontWeight.Bold ]
-                                                TextBlock.create
-                                                    [ TextBlock.text "🟢 Available   🔴 Booked   🔵 Selected"
-                                                      TextBlock.fontSize 10.0
-                                                      TextBlock.textWrapping TextWrapping.Wrap ] ] ] ] ]
+                                    ] ]
 
                         // Main cinema seating area
                         ScrollViewer.create

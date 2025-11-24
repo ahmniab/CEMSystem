@@ -3,12 +3,10 @@ namespace CEMSystem.Components
 open System
 open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
-open Avalonia.FuncUI.Types
 open Avalonia.Controls
 open Avalonia.Layout
 open Avalonia.Media
 open CEMSystem.Data
-open CEMSystem.Services
 
 module StaffValidationView =
     let view () =

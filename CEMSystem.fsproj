@@ -10,8 +10,15 @@
     <Compile Include="Services/TicketService.fs" />
     <Compile Include="Services/HtmlTicketGenerator.fs" />
     <Compile Include="Data/BD.fs" />
+    <Compile Include="Components/BookingHelpers.fs" />
+    <Compile Include="Components/TicketHelpers.fs" />
+    <Compile Include="Components/UIHelpers.fs" />
+    <Compile Include="Components/ValidationHelpers.fs" />
+    <Compile Include="Components/ValidationUIHelpers.fs" />
+    <Compile Include="Components/SeatGridView.fs" />
     <Compile Include="Components/CinemaView.fs" />
     <Compile Include="Components\StaffValidationView.fs" />
+    <Compile Include="Components/MainView.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

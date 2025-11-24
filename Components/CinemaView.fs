@@ -19,87 +19,47 @@ module CinemaView =
                     | Result.Error _ -> CinemaService.createCinemaHall 20 11
                 )
 
-            let selectedSeat = ctx.useState (None: (int * int) option)
-            let customerName = ctx.useState ""
-            let statusMessage = ctx.useState "Cinema loaded - Click a seat to select it"
+            // Create UI state helper
+            let uiState =
+                { UIHelpers.SelectedSeat =  ctx.useState (None: (int * int) option)
+                  UIHelpers.CustomerName = ctx.useState ""
+                  UIHelpers.StatusMessage = ctx.useState "Cinema loaded - Click a seat to select it" }
 
-            let seatButton row col seat isSelected =
-                let (bgColor, fgColor) =
-                    match seat.Status with
-                    | SeatStatus.Available ->
-                        if isSelected then
-                            (Brushes.LightBlue, Brushes.Black)
-                        else
-                            (Brushes.LightGreen, Brushes.Black)
-                    | SeatStatus.Booked -> (Brushes.Red, Brushes.White)
-                    | _ -> (Brushes.Gray, Brushes.White)
+            let handleSuccessfulBooking (msg: string) (ticketInfo: TicketInfo) =
+                let successMessage = TicketHelpers.handleTicketGeneration msg ticketInfo
+                UIHelpers.updateStatusMessage uiState successMessage
+                UIHelpers.clearBookingForm uiState
 
-                Button.create
-                    [ Button.content $"{row}-{col}"
-                      Button.width 35.0
-                      Button.height 25.0
-                      Button.margin (1.0, 1.0)
-                      Button.background bgColor
-                      Button.foreground fgColor
-                      Button.fontSize 8.0
-                      Button.onClick (fun _ ->
-                          selectedSeat.Set(Some(row, col))
+                // Reload cinema data
+                match BookingHelpers.reloadCinemaData () with
+                | Some c -> cinema.Set c
+                | None -> ()
 
-                          match seat.Status with
-                          | SeatStatus.Available -> statusMessage.Set $"Selected seat {row}-{col} (Available)"
-                          | SeatStatus.Booked ->
-                              let bookedBy = seat.BookedBy |> Option.defaultValue "Unknown"
-                              statusMessage.Set $"Selected seat {row}-{col} (Booked by {bookedBy})"
-                          | _ -> statusMessage.Set "Invalid seat") ]
+            let handleSimpleSuccess (msg: string) =
+                UIHelpers.updateStatusMessage uiState msg
+                UIHelpers.clearBookingForm uiState
+
+                // Reload cinema data
+                match BookingHelpers.reloadCinemaData () with
+                | Some c -> cinema.Set c
+                | None -> ()
+
+            let onSeatClick row col =
+                uiState.SelectedSeat.Set(Some(row, col))
+                let seat = cinema.Current.Seats.[row - 1, col - 1]
+                let seatMessage = BookingHelpers.getSeatStatusMessage seat row col
+                UIHelpers.updateStatusMessage uiState seatMessage
 
             let onBookSeat () =
-                match selectedSeat.Current with
-                | Some(row, col) when not (String.IsNullOrWhiteSpace(customerName.Current)) ->
-                    let request =
-                        { Row = row
-                          Column = col
-                          CustomerName = customerName.Current.Trim() }
-
+                match BookingHelpers.validateBookingInput uiState.SelectedSeat.Current uiState.CustomerName.Current with
+                | Result.Ok request ->
                     match CinemaService.bookSeat cinema.Current request with
-                    | SuccessWithTicket(msg, ticketInfo) ->
-                        // Generate HTML ticket
-                        match CEMSystem.Services.TicketService.getTicketInfo ticketInfo.TicketId with
-                        | Some(_, false) ->
-                            // Get the token for the ticket
-                            match CEMSystem.Services.TicketService.loadTickets () with
-                            | Result.Ok tickets ->
-                                match tickets |> List.tryFind (fun t -> t.TicketId = ticketInfo.TicketId) with
-                                | Some ticket ->
-                                    match CEMSystem.Services.HtmlTicketGenerator.saveTicketAsHtml ticketInfo with
-                                    | Result.Ok filename ->
-                                        statusMessage.Set
-                                            $"{msg}\n🎫 Ticket created: {filename}\n📋 Ticket ID: {ticketInfo.TicketId}"
-                                    | Result.Error htmlError ->
-                                        statusMessage.Set
-                                            $"{msg}\n⚠️ Ticket created but HTML generation failed: {htmlError}\n📋 Ticket ID: {ticketInfo.TicketId}"
-                                | None -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
-                            | Result.Error _ -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
-                        | _ -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
-
-                        selectedSeat.Set None
-                        customerName.Set ""
-                        // Reload cinema data
-                        match CinemaService.loadCinemaData () with
-                        | Result.Ok c -> cinema.Set c
-                        | Result.Error _ -> ()
-                    | Success msg ->
-                        statusMessage.Set msg
-                        selectedSeat.Set None
-                        customerName.Set ""
-                        // Reload cinema data
-                        match CinemaService.loadCinemaData () with
-                        | Result.Ok c -> cinema.Set c
-                        | Result.Error _ -> ()
-                    | SeatAlreadyBooked -> statusMessage.Set "Seat is already booked"
-                    | InvalidSeat -> statusMessage.Set "Invalid seat selection"
-                    | Error msg -> statusMessage.Set $"Error: {msg}"
-                | None -> statusMessage.Set "Please select a seat first"
-                | Some _ -> statusMessage.Set "Please enter customer name"
+                    | SuccessWithTicket(msg, ticketInfo) -> handleSuccessfulBooking msg ticketInfo
+                    | Success msg -> handleSimpleSuccess msg
+                    | SeatAlreadyBooked -> UIHelpers.updateStatusMessage uiState "Seat is already booked"
+                    | InvalidSeat -> UIHelpers.updateStatusMessage uiState "Invalid seat selection"
+                    | Error msg -> UIHelpers.updateStatusMessage uiState $"Error: {msg}"
+                | Result.Error errorMsg -> UIHelpers.updateStatusMessage uiState errorMsg
 
             DockPanel.create
                 [ DockPanel.children
@@ -111,7 +71,7 @@ module CinemaView =
                               Border.padding (10.0, 5.0)
                               Border.child (
                                   TextBlock.create
-                                      [ TextBlock.text statusMessage.Current
+                                      [ TextBlock.text uiState.StatusMessage.Current
                                         TextBlock.fontSize 12.0
                                         TextBlock.foreground Brushes.Black ]
                               ) ]
@@ -129,12 +89,12 @@ module CinemaView =
                                           TextBlock.fontSize 12.0
                                           TextBlock.fontWeight FontWeight.Bold ]
                                     TextBox.create
-                                        [ TextBox.text customerName.Current
+                                        [ TextBox.text uiState.CustomerName.Current
                                           TextBox.watermark "Enter customer name"
-                                          TextBox.onTextChanged customerName.Set ]
+                                          TextBox.onTextChanged uiState.CustomerName.Set ]
 
                                     // Selected seat info
-                                    (match selectedSeat.Current with
+                                    (match uiState.SelectedSeat.Current with
                                      | Some(row, col) ->
                                          TextBlock.create
                                              [ TextBlock.text $"Selected: Row {row}, Seat {col}"
@@ -152,8 +112,8 @@ module CinemaView =
                                           Button.background Brushes.Green
                                           Button.foreground Brushes.White
                                           Button.isEnabled (
-                                              selectedSeat.Current.IsSome
-                                              && not (String.IsNullOrWhiteSpace(customerName.Current))
+                                              uiState.SelectedSeat.Current.IsSome
+                                              && not (String.IsNullOrWhiteSpace(uiState.CustomerName.Current))
                                           )
                                           Button.onClick (fun _ -> onBookSeat ())
                                           Button.margin (0.0, 10.0, 0.0, 0.0) ]
@@ -162,11 +122,8 @@ module CinemaView =
                                         [ Button.content "Clear Selection"
                                           Button.background Brushes.Gray
                                           Button.foreground Brushes.White
-                                          Button.isEnabled selectedSeat.Current.IsSome
-                                          Button.onClick (fun _ ->
-                                              selectedSeat.Set None
-                                              customerName.Set ""
-                                              statusMessage.Set "Selection cleared") ]
+                                          Button.isEnabled uiState.SelectedSeat.Current.IsSome
+                                          Button.onClick (fun _ -> UIHelpers.clearSelectionWithMessage uiState) ]
 
                                     // Statistics
                                     StackPanel.create
@@ -206,71 +163,9 @@ module CinemaView =
                         ScrollViewer.create
                             [ ScrollViewer.padding 20.0
                               ScrollViewer.content (
-                                  StackPanel.create
-                                      [ StackPanel.orientation Orientation.Vertical
-                                        StackPanel.spacing 10.0
-                                        StackPanel.horizontalAlignment HorizontalAlignment.Center
-                                        StackPanel.children
-                                            [
-                                              // Screen
-                                              Border.create
-                                                  [ Border.background Brushes.DarkGray
-                                                    Border.height 30.0
-                                                    Border.width 600.0
-                                                    Border.cornerRadius 5.0
-                                                    Border.child (
-                                                        TextBlock.create
-                                                            [ TextBlock.text "SCREEN"
-                                                              TextBlock.foreground Brushes.White
-                                                              TextBlock.horizontalAlignment HorizontalAlignment.Center
-                                                              TextBlock.verticalAlignment VerticalAlignment.Center
-                                                              TextBlock.fontSize 14.0
-                                                              TextBlock.fontWeight FontWeight.Bold ]
-                                                    ) ]
-
-                                              // Seats grid
-                                              StackPanel.create
-                                                  [ StackPanel.orientation Orientation.Vertical
-                                                    StackPanel.spacing 3.0
-                                                    StackPanel.children
-                                                        [ for row in 1 .. cinema.Current.Height do
-                                                              yield
-                                                                  StackPanel.create
-                                                                      [ StackPanel.orientation Orientation.Horizontal
-                                                                        StackPanel.spacing 3.0
-                                                                        StackPanel.horizontalAlignment
-                                                                            HorizontalAlignment.Center
-                                                                        StackPanel.children
-                                                                            [
-                                                                              // Row label
-                                                                              yield
-                                                                                  TextBlock.create
-                                                                                      [ TextBlock.text $"R{row:D2}"
-                                                                                        TextBlock.width 35.0
-                                                                                        TextBlock.verticalAlignment
-                                                                                            VerticalAlignment.Center
-                                                                                        TextBlock.fontSize 10.0
-                                                                                        TextBlock.textAlignment
-                                                                                            TextAlignment.Center
-                                                                                        TextBlock.fontWeight
-                                                                                            FontWeight.Bold ]
-
-                                                                              // Seats in this row
-                                                                              for col in 1 .. cinema.Current.Width do
-                                                                                  let seat =
-                                                                                      cinema.Current.Seats.[row - 1,
-                                                                                                            col - 1]
-
-                                                                                  let isSelected =
-                                                                                      match selectedSeat.Current with
-                                                                                      | Some(selRow, selCol) ->
-                                                                                          selRow = row && selCol = col
-                                                                                      | None -> false
-
-                                                                                  yield
-                                                                                      seatButton
-                                                                                          row
-                                                                                          col
-                                                                                          seat
-                                                                                          isSelected ] ] ] ] ] ]
+                                  SeatGridView.view
+                                      { SeatGridView.Cinema = cinema.Current
+                                        SeatGridView.SelectedSeat = uiState.SelectedSeat.Current
+                                        SeatGridView.OnSeatClick = onSeatClick }
+                                  :> Types.IView
                               ) ] ] ])

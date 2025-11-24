@@ -1,349 +1,279 @@
-# CEM Cinema Management System 🎬# Cinema Seat Booking System (CEMSystem)
+# CEM Cinema Management System 🎬
 
-A comprehensive cinema seat booking and ticket management system built with F# and Avalonia UI.A modern cinema seat booking application built with F# and Avalonia UI that manages seat reservations in a 20x11 cinema hall.
+A modern cinema seat booking and ticket management system built with F# and Avalonia UI. The system provides a complete workflow from customer seat booking to staff ticket validation at cinema entrance.
 
-## Features 🎯## Features
+## Features 🎯
 
-### 🎪 Cinema Booking System### Cinema Hall Layout
+### 🎪 Cinema Booking System
 
-- **Visual Seat Selection**: Interactive 2D grid representing cinema seats (20x11 layout)
-
-- **Real-time Availability**: Color-coded seat status (Available: Green, Booked: Red, Selected: Blue)- **Dimensions**: 20 seats wide × 11 rows high (220 total seats)
-
-- **Customer Management**: Book seats with customer name and automatic timestamps- **2D Array Representation**: Seats are stored and managed in a 2D array structure
-
-- **Data Persistence**: All bookings saved to `cinema_bookings.json`- **Visual Grid**: Interactive visual representation of the cinema hall with a screen at the top
-
+- **Visual Seat Selection**: Interactive 2D grid representing cinema seats (20x11 layout = 220 total seats)
+- **Real-time Availability**: Color-coded seat status (🟢 Available, 🔴 Booked, 🔵 Selected)
+- **Customer Management**: Book seats with customer name and automatic timestamps
+- **Data Persistence**: All bookings saved to `cinema_bookings.json`
 - **Statistics**: Live display of available/total seats
+- **Responsive UI**: Immediate visual feedback for all booking operations
 
-### Seat Management
+### 🎫 Simple Ticketing System
 
-### 🎫 Digital Ticketing System
+- **Automatic Ticket Generation**: Each booking creates a simple ticket with unique ID
+- **Ticket IDs**: Hash-based unique identifiers (e.g., TKT-A1B2C3D4)
+- **HTML Ticket Export**: Professional, printable HTML tickets
+- **Ticket Database**: All tickets stored in `tickets.json`
 
-- **Automatic Ticket Generation**: Each booking creates a secure digital ticket- **Seat States**:
+### 👨‍💼 Staff Validation Interface
 
-- **JWT-like Security**: Cryptographically signed tickets with HMAC-SHA256 - 🟢 Available (Light Green)
-
-- **Unique Ticket IDs**: SHA256-based unique identifiers (e.g., TKT-a1b2c3d4e5f6g7h8) - 🔴 Booked (Red)
-
-- **HTML Ticket Export**: Beautiful, printable HTML tickets with professional design - 🔵 Selected (Light Blue)
-
-- **Digital Signatures**: Tamper-proof token validation- **Seat Identification**: Each seat is labeled with Row-Column format (e.g., "1-5", "11-20")
-
-- **Click to Select**: Click any seat to view its status or select it for booking
-
-### 🔐 Ticket Validation System
-
-- **Ticket Verification**: Validate tickets by ID with cryptographic signature checking### Booking Operations
-
+- **Dual-View Application**: Separate interfaces for customer booking and staff validation
+- **Ticket Verification**: Validate tickets by ID lookup in database
 - **Entry Management**: Redeem valid tickets to allow cinema entry
+- **Automatic Seat Clearing**: Seats become available after ticket redemption
+- **One-time Use**: Tickets become invalid after redemption
 
-- **Automatic Seat Clearing**: Seats become available after ticket redemption- **Book Seat**: Reserve an available seat for a specific customer
+## Technical Architecture 🏗️
 
-- **Anti-fraud Protection**: One-time use tickets prevent duplicate entries- **Cancel Booking**: Release a previously booked seat back to available status
+### Project Structure
 
-- **Customer Information**: Store customer name and booking timestamp
-
-## Technical Architecture 🏗️- **Real-time Updates**: Immediate visual feedback for all booking operations
-
-### Modular Design### Data Persistence
-
-The system is organized into multiple modules for maintainability:
-
-- **JSON Storage**: All booking data is saved in `cinema_bookings.json`
-
-````- **Auto-save**: Bookings are automatically saved after each operation
-
-CEMSystem/- **Auto-load**: Previous bookings are restored when the application starts
-
-├── Data/- **Backup-friendly**: Human-readable JSON format for easy backup and transfer
-
-│   ├── BD.fs                    # Core cinema booking service
-
-│   └── TicketModels.fs          # Ticket data structures## Technical Architecture
-
-├── Services/
-
-│   ├── DigitalSignatureService.fs # JWT-like token creation/validation### Technologies Used
-
-│   ├── TicketService.fs         # Ticket CRUD operations
-
-│   └── HtmlTicketGenerator.fs   # HTML ticket rendering- **Language**: F# (Functional Programming)
-
-├── Components/- **UI Framework**: Avalonia UI with FuncUI
-
-│   ├── CinemaView.fs           # Main booking interface- **Data Format**: JSON with System.Text.Json
-
-│   └── TicketValidationView.fs # Ticket validation interface- **Platform**: Cross-platform (.NET)
-
-└── Program.fs                   # Application entry point
-
-```### Project Structure
-
-
-
-### Digital Security Features 🛡️```
-
+```
 CEMSystem/
+├── Data/
+│   ├── BD.fs                    # Core cinema booking service
+│   └── TicketModels.fs          # Ticket data structures
+├── Services/
+│   ├── TicketService.fs         # Ticket CRUD operations
+│   └── HtmlTicketGenerator.fs   # HTML ticket rendering
+├── Components/
+│   ├── CinemaView.fs           # Main booking interface
+│   └── StaffValidationView.fs  # Staff ticket validation interface
+├── Program.fs                   # Application entry point & navigation
+├── CEMSystem.fsproj            # Project configuration
+├── cinema_bookings.json        # Seat booking data (auto-generated)
+├── tickets.json                # Ticket database (auto-generated)
+├── Tickets/                    # Generated HTML tickets folder
+│   └── ticket_TKT-*.html      # Individual ticket HTML files
+└── README.md                   # This documentation
+```
 
-#### JWT-like Token Structure├── Data/
+### Technologies Used
 
-```│   └── BD.fs                 # Data layer with booking logic
+- **Language**: F# (Functional Programming)
+- **UI Framework**: Avalonia UI with FuncUI for reactive components
+- **Data Format**: JSON with System.Text.Json
+- **Platform**: Cross-platform (.NET 10.0)
+- **Architecture**: Modular functional design with separation of concerns
 
-Header.Payload.Signature├── Components/
+### Data Models
 
-```│   └── CinemaView.fs        # UI components for cinema visualization
+#### Seat Structure
 
-├── Program.fs               # Main application entry point
-
-**Header**: `{"alg":"HS256","typ":"TKT"}`├── CEMSystem.fsproj        # Project configuration
-
-└── cinema_bookings.json    # Seat booking data (created at runtime)
-
-**Payload**: Contains:```
-
-- Customer name
-
-- Seat information ("Row X, Seat Y")### Data Models
-
-- Booking date and time
-
-- No expiration date (as per requirements)#### Seat Structure
-
-
-
-**Signature**: HMAC-SHA256 with secret key```fsharp
-
+```fsharp
 type Seat = {
-
-#### Ticket ID Generation    Row: int                    // Seat row (1-11)
-
-- SHA256 hash of: `{customer}:{seat_info}:{timestamp}`    Column: int                // Seat column (1-20)
-
-- Format: `TKT-{first16chars}`    Status: SeatStatus         // Available or Booked
-
-- Example: `TKT-a1b2c3d4e5f6g7h8`    BookedBy: string option    // Customer name (if booked)
-
+    Row: int                    // Seat row (1-11)
+    Column: int                 // Seat column (1-20)
+    Status: SeatStatus          // Available or Booked
+    BookedBy: string option     // Customer name (if booked)
     BookingTime: DateTime option // When the booking was made
+}
+```
 
-## Usage Guide 📖}
+#### Cinema Hall
 
-````
+```fsharp
+type CinemaHall = {
+    Width: int      // 20 seats
+    Height: int     // 11 rows
+    Seats: Seat[,]  // 2D array of seats
+}
+```
 
-### 1. Booking a Seat
+#### Ticket Information
 
-1. Open the application and go to "🎬 Cinema Booking" tab#### Cinema Hall
+```fsharp
+type TicketInfo = {
+    CustomerName: string
+    SeatRow: int
+    SeatColumn: int
+    BookingDate: DateTime
+    TicketId: string  // Simple hash-based ID
+}
+```
 
-2. Click on an available (green) seat
+## Getting Started 🚀
 
-3. Enter customer name in the text field```fsharp
+### Prerequisites
 
-4. Click "Book Seat"type CinemaHall = {
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
+- Any IDE that supports F# (VS Code, Visual Studio, JetBrains Rider)
 
-5. System generates ticket automatically Width: int // 20 seats
+### Development Setup
 
-6. HTML ticket file is saved (e.g., `ticket_TKT-a1b2c3d4e5f6g7h8.html`) Height: int // 11 rows
+1. **Clone the repository:**
 
-   Seats: Seat[,] // 2D array of seats
+```bash
+git clone https://github.com/ahmniab/CEMSystem.git
+cd CEMSystem
+```
 
-### 2. Validating Tickets}
+2. **Restore dependencies:**
 
-1. Go to "🎫 Ticket Validation" tab```
+```bash
+dotnet restore
+```
 
-2. Enter the ticket ID (from customer's ticket)
+3. **Build the project:**
 
-3. Click "🔍 Validate Ticket"## Usage Instructions
+```bash
+dotnet build
+```
 
-4. System shows ticket details and validity
+4. **Run the application:**
 
-5. If valid, click "🎉 Redeem & Enter" to allow entry### Running the Application
+```bash
+dotnet run
+```
 
-6. Seat is automatically cleared for new bookings
+The application will start with a dark theme UI showing both booking and staff validation interfaces.
 
-````bash
+### Development Commands
 
-### 3. Ticket Information# Navigate to project directory
+```bash
+# Clean build artifacts
+dotnet clean
 
-Each ticket contains:cd /path/to/CEMSystem
+# Build in release mode
+dotnet build --configuration Release
 
-- **Customer Name**: Who booked the seat
+# Run with specific verbosity
+dotnet run --verbosity normal
 
-- **Seat Information**: Row and column number# Build and run
+# Watch for changes during development
+dotnet watch run
+```
 
-- **Booking Date/Time**: When the reservation was madedotnet run
+## Usage Guide 📖
 
-- **Ticket ID**: Unique identifier for validation```
+### Application Interface
 
-- **Digital Signature**: Cryptographic proof of authenticity
+The application has two main views accessible via navigation tabs:
 
-### Using the Interface
+#### 🎬 Cinema Booking (Customer Interface)
+
+1. **View Cinema Hall**: Interactive grid showing all 220 seats (20x11)
+2. **Select a Seat**: Click any available (green) seat to select it (turns blue)
+3. **Enter Customer Details**: Type customer name in the input field
+4. **Book Seat**: Click "Book Seat" to confirm reservation
+5. **Ticket Generation**: System automatically creates ticket with unique ID
+6. **HTML Export**: Professional ticket is saved as HTML file in `Tickets/` folder (e.g., `Tickets/ticket_TKT-A1B2C3.html`)
+
+#### 🎫 Staff Validation (Cinema Entrance)
+
+1. **Enter Ticket ID**: Input the ticket ID from customer's ticket
+2. **Validate Ticket**: Click "Validate" to check ticket authenticity
+3. **View Details**: System displays customer name, seat info, and booking date
+4. **Allow Entry**: Click "Allow Entry" to redeem ticket and grant access
+5. **Seat Release**: Redeemed tickets automatically clear the cinema seat
+
+### Booking Examples
+
+**Booking a Seat:**
+
+1. Click seat "R05-C10" (Row 5, Column 10)
+2. Enter "John Doe" as customer name
+3. Click "Book Seat"
+4. Seat turns red and shows as booked
+5. Ticket file `Tickets/ticket_TKT-123ABC.html` is created
+
+**Staff Validation:**
+
+1. Customer arrives with ticket ID: `TKT-123ABC`
+2. Staff enters ID and clicks "Validate"
+3. System shows: "✅ VALID TICKET - John Doe, Row 5, Column 10"
+4. Staff clicks "Allow Entry" to redeem ticket
+5. Seat becomes available for new bookings
 
 ## Data Storage 💾
 
-1. **View Cinema Hall**: The main screen shows all 220 seats arranged in 11 rows of 20 seats each
+### Files Created
 
-### Files Created2. **Select a Seat**: Click any seat to select it (available seats turn light blue when selected)
+- `cinema_bookings.json`: Cinema seat reservations and status
+- `tickets.json`: Ticket database with redemption tracking
+- `Tickets/ticket_TKT-*.html`: Individual printable HTML tickets (organized in Tickets folder)
 
-- `cinema_bookings.json`: Cinema seat reservations3. **Enter Customer Name**: Type the customer's name in the text box on the right panel
+### JSON Structure Examples
 
-- `tickets.json`: Ticket database with signatures4. **Book Seat**: Click "Book Seat" to confirm the reservation
-
-- `ticket_TKT-*.html`: Individual HTML tickets5. **Cancel Booking**: Select a booked seat and click "Cancel Booking" to release it
-
-6. **View Statistics**: Check available/total seat counts in the right panel
-
-### JSON Structure7. **Refresh Data**: Use the "Refresh" button to reload data from the JSON file
+**Cinema Bookings (`cinema_bookings.json`):**
 
 ```json
-
-{### Booking Examples
-
+{
   "Width": 20,
-
-  "Height": 11,**Booking a Seat:**
-
-  "Seats": [
-
-    {1. Click seat "5-10" (Row 5, Column 10)
-
-      "Row": 1,2. Enter "John Doe" as customer name
-
-      "Column": 1,3. Click "Book Seat"
-
-      "Status": 1,4. Seat turns red and shows as booked
-
-      "BookedBy": "John Doe",
-
-      "BookingTime": "2024-11-24T14:30:00"**Canceling a Booking:**
-
-    }
-
-  ]1. Click any red (booked) seat
-
-}2. Click "Cancel Booking"
-
-```3. Seat turns green and becomes available again
-
-
-
-## Security Features 🔒## Data Storage Format
-
-
-
-### Anti-Fraud MeasuresThe `cinema_bookings.json` file stores all seat data in this format:
-
-- **Cryptographic Signatures**: HMAC-SHA256 prevents ticket forgery
-
-- **One-time Use**: Tickets become invalid after redemption```json
-
-- **Tamper Detection**: Any modification invalidates the signature{
-
-- **Unique IDs**: SHA256-based IDs prevent duplication  "Width": 20,
-
   "Height": 11,
-
-### Validation Process  "Seats": [
-
-1. Parse ticket ID format    {
-
-2. Lookup ticket in database      "Row": 1,
-
-3. Verify cryptographic signature      "Column": 1,
-
-4. Check redemption status      "Status": 0,
-
-5. Validate seat information      "BookedBy": null,
-
-      "BookingTime": null
-
-## Technical Requirements 🔧    },
-
+  "Seats": [
     {
-
-- **.NET 10.0**: Latest .NET framework      "Row": 1,
-
-- **F# Language**: Functional programming paradigm      "Column": 2,
-
-- **Avalonia UI**: Cross-platform desktop framework      "Status": 1,
-
-- **Avalonia FuncUI**: Functional reactive UI programming      "BookedBy": "John Doe",
-
+      "Row": 1,
+      "Column": 1,
+      "Status": 0,
+      "BookedBy": null,
+      "BookingTime": null
+    },
+    {
+      "Row": 1,
+      "Column": 2,
+      "Status": 1,
+      "BookedBy": "John Doe",
       "BookingTime": "2024-11-24T15:30:00.123Z"
-
-### Dependencies    }
-
-```xml  ]
-
-<PackageReference Include="Avalonia.Desktop" Version="11.1.0" />}
-
-<PackageReference Include="Avalonia.FuncUI" Version="1.5.1" />```
-
-<PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
-
-```Where `Status: 0` = Available, `Status: 1` = Booked
-
-
-
-## Building and Running 🚀## Development Features
-
-
-
-```bash- **Type Safety**: F# provides compile-time safety for all booking operations
-
-# Build the project- **Immutable Data**: Functional programming principles ensure data integrity
-
-dotnet build- **Error Handling**: Comprehensive error handling with detailed user feedback
-
-- **Responsive UI**: Real-time updates and visual feedback for all operations
-
-# Run the application- **Cross-platform**: Runs on Windows, macOS, and Linux
-
-dotnet run
-
-```## Future Enhancements
-
-
-
-## Future Enhancements 💡Potential improvements for the system:
-
-
-
-Potential features for future versions:- Multiple cinema halls support
-
-- **Multiple Halls**: Support for different cinema rooms- Seat pricing tiers
-
-- **Seat Pricing**: Variable pricing by seat location- Booking time limits
-
-- **Time Slots**: Multiple showings per day- Customer contact information
-
-- **Payment Integration**: Payment processing- Booking confirmation emails
-
-- **Barcode/QR Codes**: Visual ticket codes- Seat selection preferences (aisle, center, etc.)
-
-- **Mobile App**: Companion mobile application- Group booking functionality
-
-- **Web Interface**: Browser-based booking- Payment integration
-
-- **Reporting**: Analytics and reporting dashboard
-
----
-
-## File Structure Overview 📁
-
-**Built with ❤️ using F# and Avalonia UI**
-
-````
-
-├── CEMSystem.fsproj # Project configuration
-├── cinema_bookings.json # Cinema data (auto-generated)
-├── tickets.json # Ticket database (auto-generated)
-├── ticket_TKT-\*.html # Generated HTML tickets
-├── Data/
-├── Services/
-├── Components/
-└── README.md # This documentation
-
+    }
+}
 ```
+
+## Key Features ✨
+
+### Simple & Reliable
+
+- **No Complex Authentication**: Straightforward ticket validation by ID lookup
+- **One-time Use**: Tickets become invalid after redemption to prevent reuse
+- **Automatic Data Persistence**: All data automatically saved to JSON files
+- **Error Handling**: Comprehensive error messages and validation
+
+### Development Features
+
+- **Type Safety**: F# provides compile-time safety for all booking operations
+- **Immutable Data**: Functional programming principles ensure data integrity
+- **Responsive UI**: Real-time updates and visual feedback for all operations
+- **Cross-platform**: Runs on Windows, macOS, and Linux
+- **Modular Architecture**: Clean separation of concerns with functional design
+
+## Dependencies 📦
+
+The project uses these NuGet packages:
+
+```xml
+<PackageReference Include="Avalonia.Desktop" Version="11.1.0" />
+<PackageReference Include="Avalonia.FuncUI" Version="1.5.1" />
+<PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
+```
+
+## Future Enhancements 💡
+
+Potential improvements for the system:
+
+- **Multiple Cinema Halls**: Support for different cinema rooms and showtimes
+- **Seat Pricing Tiers**: Variable pricing by seat location (front, middle, back)
+- **Time-based Bookings**: Multiple showtimes per day with time slot management
+- **Customer Profiles**: Customer contact information and booking history
+- **Payment Integration**: Payment processing and receipt generation
+- **Barcode/QR Codes**: Visual ticket codes for faster validation
+- **Group Bookings**: Reserve multiple seats in a single transaction
+- **Mobile App**: Companion mobile application for customer bookings
+- **Web Interface**: Browser-based booking system
+- **Analytics Dashboard**: Reporting and analytics for cinema management
+- **Email Notifications**: Booking confirmation and reminder emails
+
+## Contributing 🤝
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Make your changes and test thoroughly
+4. Commit your changes: `git commit -am 'Add new feature'`
+5. Push to the branch: `git push origin feature/new-feature`
+6. Submit a pull request
 
 ## License 📄
 
@@ -351,5 +281,20 @@ This project is part of the CEM Cinema Management System.
 
 ---
 
-**Made with ❤️ using F# and Avalonia UI**
+**Built with ❤️ using F# and Avalonia UI**
+_Where `Status: 0` = Available, `Status: 1` = Booked_
+
+**Tickets Database (`tickets.json`):**
+
+```json
+[
+  {
+    "TicketId": "TKT-A1B2C3",
+    "CustomerName": "John Doe",
+    "SeatRow": 5,
+    "SeatColumn": 10,
+    "BookingDate": "2024-11-24T15:30:00.123Z",
+    "IsRedeemed": false
+  }
+]
 ```

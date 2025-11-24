@@ -1,7 +1,5 @@
 namespace CEMSystem.Components
 
-open System
-open Avalonia.FuncUI
 open Avalonia.FuncUI.DSL
 open Avalonia.Controls
 open Avalonia.Layout

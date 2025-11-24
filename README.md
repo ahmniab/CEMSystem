@@ -295,7 +295,7 @@ Potential improvements for the system:
 
 ## License 📄
 
-This project is part of the CEM Cinema Management System.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ---
 

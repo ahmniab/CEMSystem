@@ -1,0 +1,11 @@
+[
+  {
+    "TicketId": "TKT-f7f4eaf3b5b5c641",
+    "CustomerName": "Hey",
+    "SeatRow": 7,
+    "SeatColumn": 16,
+    "BookingDate": "2025-11-24T17:01:53.3793523+02:00",
+    "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IlRLVCJ9.eyJDdXN0b21lck5hbWUiOiJIZXkiLCJTZWF0SW5mbyI6IlJvdyA3LCBTZWF0IDE2IiwiQm9va2luZ0RhdGVUaW1lIjoiMjAyNS0xMS0yNFQxNzowMTo1My4zNzkzNTIzKzAyOjAwIn0=.3Gx9KxPGaO5dGF9R3QN9GZ3_buMhbMf-hOL19U9Edcg",
+    "IsRedeemed": false
+  }
+]

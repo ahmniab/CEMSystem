@@ -33,6 +33,7 @@ type BookingRequest =
 // Booking result
 type BookingResult =
     | Success of string
+    | SuccessWithTicket of string * TicketInfo // Message and ticket info
     | SeatAlreadyBooked
     | InvalidSeat
     | Error of string
@@ -142,7 +143,7 @@ module CinemaService =
     let private isValidSeat (cinema: CinemaHall) row col =
         row >= 1 && row <= cinema.Height && col >= 1 && col <= cinema.Width
 
-    // Book a seat
+    // Book a seat and create ticket
     let bookSeat (cinema: CinemaHall) (request: BookingRequest) =
         if not (isValidSeat cinema request.Row request.Column) then
             InvalidSeat
@@ -150,6 +151,7 @@ module CinemaService =
             let rowIndex = request.Row - 1
             let colIndex = request.Column - 1
             let currentSeat = cinema.Seats.[rowIndex, colIndex]
+            let bookingTime = DateTime.Now
 
             match currentSeat.Status with
             | SeatStatus.Available ->
@@ -158,17 +160,61 @@ module CinemaService =
                     { currentSeat with
                         Status = SeatStatus.Booked
                         BookedBy = Some request.CustomerName
-                        BookingTime = Some DateTime.Now }
+                        BookingTime = Some bookingTime }
 
                 cinema.Seats.[rowIndex, colIndex] <- updatedSeat
 
-                // Save updated data
+                // Save updated cinema data
                 match saveCinemaData cinema with
                 | Result.Ok() ->
-                    Success $"Seat {request.Row}-{request.Column} successfully booked for {request.CustomerName}"
+                    // Create ticket using the Services
+                    let ticketResult =
+                        CEMSystem.Services.TicketService.createTicket
+                            request.CustomerName
+                            request.Row
+                            request.Column
+                            bookingTime
+
+                    match ticketResult with
+                    | TicketCreated ticketInfo ->
+                        let message =
+                            $"Seat {request.Row}-{request.Column} successfully booked for {request.CustomerName}"
+
+                        SuccessWithTicket(message, ticketInfo)
+                    | TicketError msg ->
+                        // Seat is booked but ticket creation failed
+                        Error $"Seat booked but ticket creation failed: {msg}"
+                    | _ ->
+                        // Handle unexpected ticket operation results
+                        Error "Unexpected error during ticket creation"
                 | Result.Error msg -> Error msg
             | SeatStatus.Booked -> SeatAlreadyBooked
             | _ -> Error "Invalid seat status"
+
+    // Clear booking when ticket is redeemed
+    let clearBooking (cinema: CinemaHall) row col =
+        if not (isValidSeat cinema row col) then
+            Result.Error "Invalid seat"
+        else
+            let rowIndex = row - 1
+            let colIndex = col - 1
+            let currentSeat = cinema.Seats.[rowIndex, colIndex]
+
+            match currentSeat.Status with
+            | SeatStatus.Booked ->
+                let updatedSeat =
+                    { currentSeat with
+                        Status = SeatStatus.Available
+                        BookedBy = None
+                        BookingTime = None }
+
+                cinema.Seats.[rowIndex, colIndex] <- updatedSeat
+
+                match saveCinemaData cinema with
+                | Result.Ok() -> Result.Ok $"Seat {row}-{col} has been cleared"
+                | Result.Error msg -> Result.Error msg
+            | SeatStatus.Available -> Result.Error "Seat is not currently booked"
+            | _ -> Result.Error "Invalid seat status"
 
 
 

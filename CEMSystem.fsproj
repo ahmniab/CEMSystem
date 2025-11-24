@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Data/TicketModels.fs" />
+    <Compile Include="Services/DigitalSignatureService.fs" />
+    <Compile Include="Services/TicketService.fs" />
+    <Compile Include="Services/HtmlTicketGenerator.fs" />
     <Compile Include="Data/BD.fs" />
     <Compile Include="Components/CinemaView.fs" />
+    <Compile Include="Components/TicketValidationView.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

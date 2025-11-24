@@ -61,6 +61,34 @@ module CinemaView =
                           CustomerName = customerName.Current.Trim() }
 
                     match CinemaService.bookSeat cinema.Current request with
+                    | SuccessWithTicket(msg, ticketInfo) ->
+                        // Generate HTML ticket
+                        match CEMSystem.Services.TicketService.getTicketInfo ticketInfo.TicketId with
+                        | Some(_, false) ->
+                            // Get the token for the ticket
+                            match CEMSystem.Services.TicketService.loadTickets () with
+                            | Result.Ok tickets ->
+                                match tickets |> List.tryFind (fun t -> t.TicketId = ticketInfo.TicketId) with
+                                | Some ticket ->
+                                    match
+                                        CEMSystem.Services.HtmlTicketGenerator.saveTicketAsHtml ticketInfo ticket.Token
+                                    with
+                                    | Result.Ok filename ->
+                                        statusMessage.Set
+                                            $"{msg}\n🎫 Ticket created: {filename}\n📋 Ticket ID: {ticketInfo.TicketId}"
+                                    | Result.Error htmlError ->
+                                        statusMessage.Set
+                                            $"{msg}\n⚠️ Ticket created but HTML generation failed: {htmlError}\n📋 Ticket ID: {ticketInfo.TicketId}"
+                                | None -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
+                            | Result.Error _ -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
+                        | _ -> statusMessage.Set $"{msg}\n📋 Ticket ID: {ticketInfo.TicketId}"
+
+                        selectedSeat.Set None
+                        customerName.Set ""
+                        // Reload cinema data
+                        match CinemaService.loadCinemaData () with
+                        | Result.Ok c -> cinema.Set c
+                        | Result.Error _ -> ()
                     | Success msg ->
                         statusMessage.Set msg
                         selectedSeat.Set None

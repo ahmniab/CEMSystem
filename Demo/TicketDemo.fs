@@ -1,7 +1,7 @@
 namespace CEMSystem.Demo
 
 open System
-open CEMSystem.Data
+open CEMSystem.Models
 open CEMSystem.Services
 
 module TicketDemo =

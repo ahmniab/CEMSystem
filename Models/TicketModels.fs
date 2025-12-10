@@ -1,4 +1,4 @@
-namespace CEMSystem.Data
+namespace CEMSystem.Models
 
 open System
 

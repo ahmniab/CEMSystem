@@ -1,6 +1,6 @@
 namespace CEMSystem.Components
 
-open CEMSystem.Data
+open CEMSystem.Models
 
 module TicketHelpers =
 

@@ -6,7 +6,8 @@ open Avalonia.FuncUI.DSL
 open Avalonia.Controls
 open Avalonia.Layout
 open Avalonia.Media
-open CEMSystem.Data
+open CEMSystem.Models
+open CEMSystem.Helpers
 
 module StaffValidationView =
     let view () =

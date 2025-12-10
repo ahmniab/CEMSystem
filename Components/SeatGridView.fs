@@ -4,7 +4,7 @@ open Avalonia.FuncUI.DSL
 open Avalonia.Controls
 open Avalonia.Layout
 open Avalonia.Media
-open CEMSystem.Data
+open CEMSystem.Models
 
 module SeatGridView =
 

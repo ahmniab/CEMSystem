@@ -3,7 +3,7 @@ namespace CEMSystem.Services
 open System
 open System.IO
 open System.Text.Json
-open CEMSystem.Data
+open CEMSystem.Models
 
 module TicketService =
 

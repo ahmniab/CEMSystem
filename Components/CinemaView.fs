@@ -6,7 +6,9 @@ open Avalonia.FuncUI.DSL
 open Avalonia.Controls
 open Avalonia.Layout
 open Avalonia.Media
-open CEMSystem.Data
+open CEMSystem.Models
+open CEMSystem.Services
+open CEMSystem.Helpers
 
 module CinemaView =
 
@@ -21,7 +23,7 @@ module CinemaView =
 
             // Create UI state helper
             let uiState =
-                { UIHelpers.SelectedSeat =  ctx.useState (None: (int * int) option)
+                { UIHelpers.SelectedSeat = ctx.useState (None: (int * int) option)
                   UIHelpers.CustomerName = ctx.useState ""
                   UIHelpers.StatusMessage = ctx.useState "Cinema loaded - Click a seat to select it" }
 
@@ -51,7 +53,9 @@ module CinemaView =
                 UIHelpers.updateStatusMessage uiState seatMessage
 
             let onBookSeat () =
-                match BookingHelpers.validateBookingInput uiState.SelectedSeat.Current uiState.CustomerName.Current with
+                match
+                    BookingHelpers.validateBookingInput uiState.SelectedSeat.Current uiState.CustomerName.Current
+                with
                 | Result.Ok request ->
                     match CinemaService.bookSeat cinema.Current request with
                     | SuccessWithTicket(msg, ticketInfo) -> handleSuccessfulBooking msg ticketInfo

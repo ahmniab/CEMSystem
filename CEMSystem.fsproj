@@ -6,18 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Data/TicketModels.fs" />
+    <Compile Include="Models/TicketModels.fs" />
+    <Compile Include="Models/CinemaModels.fs" />
     <Compile Include="Services/TicketService.fs" />
     <Compile Include="Services/HtmlTicketGenerator.fs" />
-    <Compile Include="Data/BD.fs" />
-    <Compile Include="Components/BookingHelpers.fs" />
-    <Compile Include="Components/TicketHelpers.fs" />
-    <Compile Include="Components/UIHelpers.fs" />
-    <Compile Include="Components/ValidationHelpers.fs" />
-    <Compile Include="Components/ValidationUIHelpers.fs" />
+    <Compile Include="Services/CinemaService.fs" />
+    <Compile Include="Helpers/BookingHelpers.fs" />
+    <Compile Include="Helpers/TicketHelpers.fs" />
+    <Compile Include="Helpers/UIHelpers.fs" />
+    <Compile Include="Helpers/ValidationHelpers.fs" />
+    <Compile Include="Helpers/ValidationUIHelpers.fs" />
     <Compile Include="Components/SeatGridView.fs" />
     <Compile Include="Components/CinemaView.fs" />
-    <Compile Include="Components\StaffValidationView.fs" />
+    <Compile Include="Components/StaffValidationView.fs" />
     <Compile Include="Components/MainView.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

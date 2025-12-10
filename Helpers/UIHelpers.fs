@@ -1,4 +1,4 @@
-namespace CEMSystem.Components
+namespace CEMSystem.Helpers
 
 open Avalonia.FuncUI
 

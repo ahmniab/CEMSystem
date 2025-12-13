@@ -66,7 +66,6 @@ module CinemaService =
         seats
 
     // Serializable cinema data
-    [<CLIMutable>]
     type SerializableCinema =
         { Width: int
           Height: int

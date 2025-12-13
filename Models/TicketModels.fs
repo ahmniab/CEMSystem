@@ -3,7 +3,6 @@ namespace CEMSystem.Models
 open System
 
 // Ticket data structures
-[<CLIMutable>]
 type TicketInfo =
     { CustomerName: string
       SeatRow: int

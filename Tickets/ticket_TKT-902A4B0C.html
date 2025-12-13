@@ -1,24 +1,9 @@
-namespace CEMSystem.Services
-
-open System
-open System.IO
-open CEMSystem.Models
-
-module HtmlTicketGenerator =
-
-    let generateTicketHtml (ticketInfo: TicketInfo) =
-        let bookingDate = ticketInfo.BookingDate.ToString("yyyy-MM-dd")
-        let bookingTime = ticketInfo.BookingDate.ToString("HH:mm")
-        let generatedTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-        let seatNumber = sprintf "R%02d-S%02d" ticketInfo.SeatRow ticketInfo.SeatColumn
-
-        sprintf
-            """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinema Ticket - %s</title>
+    <title>Cinema Ticket - TKT-902A4B0C</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,11 +17,11 @@ module HtmlTicketGenerator =
         }
         
         .ticket {
-            background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
             padding: 30px;
             max-width: 400px;
-            width: 100%%;
+            width: 100%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             color: white;
             position: relative;
@@ -180,50 +165,34 @@ module HtmlTicketGenerator =
             <div class="info-section">
                 <div class="info-row">
                     <span class="info-label">Customer:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">Ragab</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Booking Date:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">2025-12-11</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Booking Time:</span>
-                    <span class="info-value">%s</span>
+                    <span class="info-value">12:15</span>
                 </div>
             </div>
             
             <div class="seat-info">
-                <div class="seat-number">%s</div>
+                <div class="seat-number">R07-S07</div>
                 <div class="seat-label">Your Seat</div>
             </div>
             
             <div class="ticket-id">
                 <div class="ticket-id-label">Ticket ID</div>
-                <div class="ticket-id-value">%s</div>
+                <div class="ticket-id-value">TKT-902A4B0C</div>
             </div>
             
             <div class="footer">
                 <p>Please present this ticket at the entrance</p>
                 <p>Valid for one-time use only</p>
-                <p>Generated on %s</p>
+                <p>Generated on 2025-12-11 12:15:35</p>
             </div>
         </div>
     </div>
 </body>
-</html>"""
-            ticketInfo.TicketId
-            ticketInfo.CustomerName
-            bookingDate
-            bookingTime
-            seatNumber
-            ticketInfo.TicketId
-            generatedTime
-
-    let saveTicketAsHtml (ticketInfo: TicketInfo) =
-        try
-            let filename = $"Tickets/ticket_{ticketInfo.TicketId}.html"
-            let htmlContent = generateTicketHtml ticketInfo
-            File.WriteAllText(filename, htmlContent)
-            Result.Ok filename
-        with ex ->
-            Result.Error $"Failed to save ticket as HTML: {ex.Message}"
+</html>

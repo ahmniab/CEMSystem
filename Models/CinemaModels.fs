@@ -8,7 +8,6 @@ type SeatStatus =
     | Booked = 1
 
 // Seat data structure
-[<CLIMutable>]
 type Seat =
     { Row: int
       Column: int

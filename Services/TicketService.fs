@@ -9,8 +9,6 @@ module TicketService =
 
     let private ticketsFilePath = "tickets.json"
 
-    // Serializable ticket for storage (simplified without token)
-    [<CLIMutable>]
     type SerializableTicket =
         { TicketId: string
           CustomerName: string
@@ -19,14 +17,12 @@ module TicketService =
           BookingDate: DateTime
           IsRedeemed: bool }
 
-    // Generate simple ticket ID based on ticket data
     let private generateTicketId (customerName: string) (seatInfo: string) (bookingTime: DateTime) =
         let formattedTime = bookingTime.ToString("yyyy-MM-dd-HH-mm-ss")
         let data = $"{customerName}:{seatInfo}:{formattedTime}"
         let hash = data.GetHashCode().ToString("X")
         $"TKT-{hash}"
 
-    // Load tickets from file
     let loadTickets () =
         try
             if File.Exists(ticketsFilePath) then
@@ -38,7 +34,6 @@ module TicketService =
         with ex ->
             Result.Error $"Failed to load tickets: {ex.Message}"
 
-    // Save tickets to file
     let private saveTickets (tickets: SerializableTicket list) =
         try
             let options = JsonSerializerOptions()
@@ -49,7 +44,6 @@ module TicketService =
         with ex ->
             Result.Error $"Failed to save tickets: {ex.Message}"
 
-    // Create a new ticket (simplified without digital signature)
     let createTicket (customerName: string) (seatRow: int) (seatColumn: int) (bookingDate: DateTime) =
         try
             let seatInfo = $"Row {seatRow}, Seat {seatColumn}"
@@ -79,10 +73,9 @@ module TicketService =
                     TicketCreated ticketInfo
                 | Result.Error msg -> TicketError msg
             | Result.Error msg -> TicketError msg
-        with ex ->
+        with (ex: exn) ->
             TicketError $"Failed to create ticket: {ex.Message}"
 
-    // Validate ticket by ID (simplified without token verification)
     let validateTicket (ticketId: string) =
         try
             match loadTickets () with
@@ -105,7 +98,6 @@ module TicketService =
         with ex ->
             ValidationError $"Failed to validate ticket: {ex.Message}"
 
-    // Redeem ticket and clear booking
     let redeemTicket (ticketId: string) =
         try
             match loadTickets () with
@@ -140,7 +132,6 @@ module TicketService =
         with ex ->
             TicketError $"Failed to redeem ticket: {ex.Message}"
 
-    // Get ticket by ID without redeeming
     let getTicketInfo (ticketId: string) =
         try
             match loadTickets () with
